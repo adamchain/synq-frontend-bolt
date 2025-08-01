@@ -10,7 +10,7 @@ RUN apt-get update
 
 # Install app dependencies
 COPY package.json package.json
-COPY yarn-lock.json yarn-lock.json
+COPY yarn.lock yarn.lock
 RUN yarn install
 
 COPY . .
