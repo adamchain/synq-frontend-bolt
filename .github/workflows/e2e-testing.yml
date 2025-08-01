@@ -1,0 +1,71 @@
+name: E2E
+
+on:
+  pull_request:
+
+jobs:
+  cancel-prev-runs:
+    name: Cancel Previous Runs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+
+  run-e2e-tests:
+    name: Run Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Initialize node.js
+      - name: Install node.js 18.7.0
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.7.0
+
+      # Caching node_modules (source: https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows#example-using-the-cache-action)
+      - name: Cache node modules
+        id: cache-npm
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
+        name: List the state of node modules
+        continue-on-error: true
+        run: npm list
+
+      # Install project dependencies and test
+      - name: Install dependencies
+        run: npm ci
+
+      # Run pg-test
+      - name: Spin up DB
+        run: npm run pg:test
+
+      # Initialize tables
+      - name: Initialize DB
+        run: npm run db-init-script
+
+      # Run cypress tests
+      - name: Run tests
+        uses: cypress-io/github-action@v4
+        with:
+          install: false
+          start: |
+            npm run start:server:test
+            npm run start:client:dev
+          wait-on: "http://localhost:3000"
+
+      # Stop pg-test
+      - name: Spin down DB
+        run: npm run pg:test-stop

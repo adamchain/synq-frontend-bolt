@@ -1,0 +1,25 @@
+.vscode
+.idea
+node_modules
+.DS_Store
+npm-debug.log
+.env
+!.env.example
+coverage
+dist
+dist-server
+
+# Testing related local files
+**/*.cy.js
+**/*.partial
+**/*.partial.js
+cypress/fixtures/**/*.transient.json
+cypress/downloads
+
+**/testing.js
+**/testingService.js
+
+**/*-- deals --*
+
+# Main testing file, track this.
+!**/main.cy.js

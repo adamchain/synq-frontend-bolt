@@ -1,0 +1,8 @@
+# Ignore artifacts:
+dist
+dist-server
+node_modules
+sql
+schema.json
+public/dhtmlx
+src/routes.js
