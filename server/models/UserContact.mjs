@@ -4,21 +4,16 @@ const { Model, Sequelize } = _sequelize;
 export default class UserContact extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
+    id: {
+      autoIncrement: true,
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      primaryKey: true
+    },
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true,
       field: 'user_id'
-    },
-    branchId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'branch',
-        key: 'id'
-      },
-      field: 'branch_id'
     },
     firstName: {
       type: DataTypes.STRING(25),
@@ -103,15 +98,7 @@ export default class UserContact extends Model {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "user_id" },
-          { name: "branch_id" },
-        ]
-      },
-      {
-        name: "user_user_branch_id",
-        using: "BTREE",
-        fields: [
-          { name: "branch_id" },
+          { name: "id" },
         ]
       },
       {

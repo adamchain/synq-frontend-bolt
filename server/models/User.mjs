@@ -6,7 +6,7 @@ export default class User extends Model {
   return super.init({
     id: {
       autoIncrement: true,
-      type: DataTypes.INTEGER,
+      type: DataTypes.BIGINT,
       allowNull: false,
       primaryKey: true
     },
@@ -14,6 +14,16 @@ export default class User extends Model {
       type: DataTypes.STRING(45),
       allowNull: false,
       unique: "branch_email_UNIQUE"
+    },
+    orgId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      field: 'org_id'
+    },
+    status: {
+      type: DataTypes.CHAR(1),
+      allowNull: false,
+      defaultValue: "A"
     },
     createdTime: {
       type: DataTypes.DATE,

@@ -5,9 +5,15 @@ export default class UserPwd extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
     id: {
-      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      type: DataTypes.BIGINT,
       allowNull: false,
       primaryKey: true
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: 'user_id'
     },
     password: {
       type: DataTypes.STRING(100),

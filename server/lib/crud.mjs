@@ -65,15 +65,15 @@ export async function findRows(
     limit = config.db.defaultLimit,
     showDeleted = "true",
     showDeletedOnly = "false",
-    offset = 0,
+    offset = '0',
     ...where
   } = query;
 
   if (
-    typeof model.rawAttributes.accountId !== "undefined" &&
+    typeof model.getAttributes().branchId !== "undefined" &&
     !options.authBypass
   ) {
-    where.accountId = user.currentAccountId;
+    where.branchId = user.currentBranch;
   }
 
   if (showDeletedOnly !== "false") {
@@ -82,14 +82,25 @@ export async function findRows(
     };
   }
 
-  return model.findAndCountAll({
+  const data = await model.findAndCountAll({
     where,
-    limit,
-    offset,
+    limit: parseInt(limit),
+    offset: parseInt(offset),
     paranoid: showDeleted === "true" && showDeletedOnly === "false",
     include,
     order,
   });
+
+  data.limit = parseInt(limit)
+  data.offset = parseInt(offset)
+  data.page = Math.floor(offset / limit + 1)
+  data.totalPages = Math.ceil(data.count / limit)
+  data.current = `?limit=${limit}&offset=${offset}`
+  data.prev = data.offset - data.limit < 0 ? null : `?limit=${data.limit}&offset=${data.offset - data.limit}`
+  data.next = `?limit=${data.limit}&offset=${data.offset + data.limit}`
+
+  return data
+
 }
 
 /**
@@ -190,7 +201,6 @@ export async function updateRow(
 
   Object.assign(row, data);
 
-  row.accountId = user.currentAccountId;
   return row.save();
 }
 
@@ -212,7 +222,7 @@ export async function deleteRow(
 
   const row = await getRowById(model, user, id, options);
   if (!row)
-    throw validationError("The user is not associated with this account");
+    throw validationError("The user is not associated with this organization");
 
   return row.destroy();
 }

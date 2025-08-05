@@ -20,7 +20,6 @@ import staff from './staff.mjs';
 import treatments from './treatments.mjs';
 import users from "./users.mjs";
 
-
 const router = new Router();
 
 router.get("/healthcheck", (req, res) => {
@@ -33,8 +32,14 @@ router.get("/healthcheck", (req, res) => {
 });
 
 router.get("/me", async (req, res) => {
-  res.json(req.user);
+  if (req.user) {
+    const result = await userService.get(req.user, req.user.id);
+    res.json(result);
+  } else {
+    res.status(401).send(null);
+  }
 });
+
 router.patch("/me", async (req, res) => {
   const result = await userService.update(req.user, req.user.id, req.body);
   res.json(result);
@@ -50,8 +55,7 @@ router.get("/timezones", async (req, res) => {
   res.json(result);
 })
 
-router.use("/auth", auth);
-
+// router.use("/auth", auth);
 router.use("/anesthesia", anesthesia);
 router.use("/appointments", appointments);
 router.use("/billing", billing);

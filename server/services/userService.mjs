@@ -7,7 +7,7 @@ import {
 } from "express-rest-error";
 import { models, Op } from "../lib/db.mjs";
 
-const { User } = models;
+const { User, UserContact, State, UserRoleMapping, UserPhone, Organization, Inventory } = models;
 
 export async function find(user, query) {
   if (!user) throw authRequired();
@@ -58,7 +58,32 @@ export async function get(user, userId) {
     throw accessDenied();
   }
 
-  const row = await User.findByPk(userId);
+  const row = await User.findByPk(userId, {
+    include: [
+      {
+        model: Organization,
+        as: 'org'
+      },
+      {
+        model: UserContact,
+        as: 'contact',
+        include: [
+          {
+            model: State,
+            as: 'state'
+          }
+        ]
+      },
+      {
+        model: UserPhone,
+        as: 'phones'
+      },
+      {
+        model: UserRoleMapping,
+        as: 'roles'
+      }
+    ]
+  });
   return row;
 }
 
@@ -66,7 +91,7 @@ export async function getUserByEmail(email) {
   return User.findOne({
     where: {
       email: {
-        [Op.iLike]: email.trim(),
+        [Op.like]: email.trim(),
       },
     },
   });

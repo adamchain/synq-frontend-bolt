@@ -1,26 +1,30 @@
 import { models, Op } from '../lib/db.mjs'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
-import { authRequired, validationError } from 'express-rest-error'
+import { authRequired, validationError, accessDenied } from 'express-rest-error'
 import moment from 'moment'
 import config from '../../config/index.mjs'
 
 const SALT_ROUNDS = 10
 
-const { User, UserPwd } = models;
+const { Branch, User, UserPwd } = models;
 
-export async function authenticate({ username, password }) {
-  if (!username) {
-    throw validationError("Missing username.");
+export async function authenticate({ email, password, branchId }) {
+  if (!email) {
+    throw validationError("Missing email.");
   }
   if (!password) {
     throw validationError("Missing password.");
   }
+  if (!branchId) {
+    throw validationError("Missing branch identifier.");
+  }
+
   const user = await User.findOne({
     where: {
-      isActive: true,
+      status: 'active',
       email: {
-        [Op.iLike]: username.trim(),
+        [Op.like]: email.trim(),
       },
     },
   });
@@ -29,32 +33,51 @@ export async function authenticate({ username, password }) {
     throw validationError("Email not found.");
   }
 
+  const branch = await Branch.findByPk(branchId);
+
+  if (!branch) {
+    throw validationError("Branch not found.");
+  }
+
+  if (branch.orgId !== user.orgId) {
+    throw validationError('User does not have access to this organization');
+  }
+
   const latestPwd = await UserPwd.findOne({
     rejectOnEmpty: undefined,
     where: { userId: user.id },
-    order: [['created_time', 'DESC']]
+    order: [['created_at', 'DESC']]
   })
 
-  if (!latestPwd) throw new Error('Password not set for user');
+  if (!latestPwd) {
+    throw validationError('Password not set for user');
+  }
 
   const isMatch = await bcrypt.compare(password, latestPwd.password)
-  if (!isMatch) throw validationError("Wrong password.");
+  if (!isMatch) {
+    throw validationError("Wrong password.");
+  }
 
-  return generateToken(user);
+  return generateToken(user, branchId);
 }
-export async function logout(user, id) {
-  // todo: implement logout
-}
 
-export const register = async ({ email, password }) => {
-  const existing = await User.findOne({ rejectOnEmpty: undefined, where: { email } })
-  if (existing) throw new Error('Email already in use')
+export const register = async ({ email, password, branchId }) => {
+  const existing = await User.findOne({ rejectOnEmpty: undefined, where: { email } });
+  if (existing) {
+    throw validationError('Email already in use');
+  }
 
-  const user = await User.create({ email })
+  const branch = await Branch.findByPk(branchId);
 
-  const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS)
+  if (!branch) {
+    throw validationError("Branch not found.");
+  }
 
-  await UserPwd.create({ user_id: user.id, password: hashedPassword })
+  const user = await User.create({ email, branchId, orgId: branch.orgId });
+
+  const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+
+  await UserPwd.create({ user_id: user.id, password: hashedPassword });
 
   return user
 }
@@ -75,7 +98,8 @@ function verifyToken(token) {
     throw authRequired("Access token is not valid.");
   }
 
-  if (!decoded.u || decoded.a === undefined) {
+  console.log(decoded)
+  if (!decoded.u || decoded.b === undefined) {
     throw authRequired("Access token is not valid.");
   }
 
@@ -85,19 +109,25 @@ function verifyToken(token) {
 export async function getUserByToken(token) {
   const decodedToken = verifyToken(token);
   const userId = decodedToken.u;
-  const row = await User.findByPk(userId, { raw: true });
-  return row;
+  return await User.findByPk(userId, { raw: true });
 }
 
-export async function generateToken(user) {
+export async function getBranchIdByToken(token) {
+  const decodedToken = verifyToken(token);
+  return decodedToken.b;
+}
+
+export async function generateToken(user, branchId) {
   const expiresInDays = 365;
   const expirationTimestamp = moment().add(expiresInDays, "days").format("X");
   const payload = {
     u: user.id,
+    b: branchId,
+    o: user.orgId,
     exp: parseInt(expirationTimestamp, 10),
   };
   return {
-    accessToken: jwt.sign(payload, config.jwt.secret),
+    authToken: jwt.sign(payload, config.jwt.secret),
     expires: new Date(expirationTimestamp * 1000),
     user,
   };

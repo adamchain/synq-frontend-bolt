@@ -29,7 +29,7 @@ config.default = {
     pass: dbPass,
     name: dbName,
     memoize: 150,
-    defaultLimit: 100,
+    defaultLimit: 25,
   },
   aws: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
