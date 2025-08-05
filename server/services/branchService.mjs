@@ -8,7 +8,7 @@ import {
   updateRow,
 } from "../lib/crud.mjs";
 
-const { Branch: Model, Organization } = models;
+const { Branch: Model, BranchType, Organization, State } = models;
 
 export async function get(user, id) {
   return getRowById(Model, user, id);
@@ -31,5 +31,9 @@ export async function del(user, id) {
 }
 
 export async function getByUrl(url) {
-  return Model.findOne({ where: { url }, include: [{ model: Organization } ]})
+  return Model.findOne({ where: { url }, include: [
+    { model: BranchType, as: 'branchType' },
+    { model: Organization, as: 'org' },
+    { model: State, as: 'state' }
+  ]})
 }

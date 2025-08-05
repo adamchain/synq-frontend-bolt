@@ -1,7 +1,7 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class ApptType extends Model {
+export default class BranchType extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
     id: {
@@ -12,20 +12,10 @@ export default class ApptType extends Model {
     name: {
       type: DataTypes.STRING(20),
       allowNull: false,
-    },
-    length: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    isDeleted: {
-      type: DataTypes.BOOLEAN,
-      allowNull: true,
-      defaultValue: 0,
-      field: 'is_deleted'
     }
   }, {
     sequelize,
-    tableName: 'appt_type',
+    tableName: 'branch_type',
     timestamps: true,
     paranoid: true,
     indexes: [

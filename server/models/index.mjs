@@ -14,6 +14,7 @@ import _BranchHours from "./BranchHours.mjs";
 import _BranchPhone from "./BranchPhone.mjs";
 import _BranchSettings from "./BranchSettings.mjs";
 import _BranchStatus from "./BranchStatus.mjs";
+import _BranchType from "./BranchType.mjs";
 import _CalendarBlock from "./CalendarBlock.mjs";
 import _CalendarBlockExcluded from "./CalendarBlockExcluded.mjs";
 import _CalendarBlockRepeat from "./CalendarBlockRepeat.mjs";
@@ -174,6 +175,7 @@ export default function initModels(sequelize) {
   const BranchPhone = _BranchPhone.init(sequelize, DataTypes);
   const BranchSettings = _BranchSettings.init(sequelize, DataTypes);
   const BranchStatus = _BranchStatus.init(sequelize, DataTypes);
+  const BranchType = _BranchType.init(sequelize, DataTypes);
   const CalendarBlock = _CalendarBlock.init(sequelize, DataTypes);
   const CalendarBlockExcluded = _CalendarBlockExcluded.init(
     sequelize,
@@ -528,6 +530,8 @@ export default function initModels(sequelize) {
     as: "calendarBlocks",
     foreignKey: "branchId",
   });
+  Branch.belongsTo(BranchType, { as: "branchType", foreignKey: "branchTypeId" });
+  BranchType.hasMany(Appt, { as: "branches", foreignKey: "branchTypeId" });
   CalendarBlockExcluded.belongsTo(Branch, {
     as: "branch",
     foreignKey: "branchId",
@@ -1327,6 +1331,7 @@ export default function initModels(sequelize) {
     BranchPhone,
     BranchSettings,
     BranchStatus,
+    BranchType,
     CalendarBlock,
     CalendarBlockExcluded,
     CalendarBlockRepeat,
