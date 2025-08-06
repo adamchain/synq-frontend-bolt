@@ -9,11 +9,6 @@ export default class Branch extends Model {
       allowNull: false,
       primaryKey: true
     },
-    branchTypeId: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      field: 'branch_type_id'
-    },
     orgId: {
       type: DataTypes.INTEGER,
       allowNull: true,

@@ -1,7 +1,7 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class ClientSyContact extends Model {
+export default class ClientContact extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
     id: {
@@ -34,7 +34,7 @@ export default class ClientSyContact extends Model {
     }
   }, {
     sequelize,
-    tableName: 'client_sy_contact',
+    tableName: 'client_contact',
     timestamps: true,
     paranoid: true,
     indexes: [
@@ -47,7 +47,7 @@ export default class ClientSyContact extends Model {
         ]
       },
       {
-        name: "client_sy_contact_branch_id",
+        name: "client_contact_branch_id",
         using: "BTREE",
         fields: [
           { name: "branch_id" },

@@ -8,35 +8,13 @@ import {
   updateRow,
 } from "../lib/crud.mjs";
 
-const { Appt: Model, ApptType, ApptStatus, Branch, Patient, User } = models;
+const { Reminder: Model } = models;
 
 export async function get(user, id) {
   return getRowById(Model, user, id);
 }
 
 export async function find(user, query, options = {}) {
-  options.include = [
-    {
-      model: Branch,
-      as: 'branch'
-    },
-    {
-      model: Patient,
-      as: 'patient'
-    },
-    {
-      model: User,
-      as: 'user'
-    },
-    {
-      model: ApptType,
-      as: 'apptType'
-    },
-    {
-      model: ApptStatus,
-      as: 'apptStatus'
-    }
-  ]
   return findRows(Model, user, query, options);
 }
 
@@ -49,5 +27,5 @@ export async function update(user, id, data) {
 }
 
 export async function del(user, id) {
-  return deleteRow(Appt, user, id);
+  return deleteRow(Model, user, id);
 }

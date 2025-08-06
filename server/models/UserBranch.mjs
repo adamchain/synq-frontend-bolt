@@ -1,7 +1,7 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class UserBranchMapping extends Model {
+export default class UserBranch extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
     userId: {
@@ -38,7 +38,7 @@ export default class UserBranchMapping extends Model {
     }
   }, {
     sequelize,
-    tableName: 'user_branch_mapping',
+    tableName: 'user_branch',
     timestamps: true,
     paranoid: true,
     indexes: [

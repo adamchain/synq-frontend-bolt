@@ -16,6 +16,7 @@ import medications from './medications.mjs';
 import organizations from './organizations.mjs';
 import patients from './patients.mjs';
 import reports from './reports.mjs';
+import search from './search.mjs';
 import staff from './staff.mjs';
 import treatments from './treatments.mjs';
 import users from "./users.mjs";
@@ -55,6 +56,7 @@ router.get("/timezones", async (req, res) => {
   res.json(result);
 })
 
+
 // router.use("/auth", auth);
 router.use("/anesthesia", anesthesia);
 router.use("/appointments", appointments);
@@ -68,6 +70,7 @@ router.use("/medications", medications);
 router.use("/organizations", organizations);
 router.use("/patients", patients);
 router.use("/reports", reports);
+router.use("/search", search);
 router.use("/staff", staff);
 router.use("/treatments", treatments);
 router.use("/users", users);

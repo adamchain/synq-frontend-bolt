@@ -7,12 +7,12 @@ import restful from "../lib/restful.mjs";
 
 const router = new Router();
 
-router.use("/", restful(inventoryService));
+router.use("/", restful(inventoryPackageService));
 
 router.use(
-  "/:inventoryId/packages",
-  restful(inventoryPackageService, {
-    filterParams: { inventoryId: "inventoryId" },
+  "/:packageId/inventory",
+  restful(inventoryService, {
+    filterParams: { packageId: "packageId" },
   })
 );
 

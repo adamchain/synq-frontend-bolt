@@ -9,6 +9,11 @@ export default class Organization extends Model {
       allowNull: false,
       primaryKey: true
     },
+    organizationTypeId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: 'organization_type_id'
+    },
     name: {
       type: DataTypes.STRING(45),
       allowNull: false

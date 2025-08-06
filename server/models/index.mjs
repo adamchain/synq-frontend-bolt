@@ -14,7 +14,7 @@ import _BranchHours from "./BranchHours.mjs";
 import _BranchPhone from "./BranchPhone.mjs";
 import _BranchSettings from "./BranchSettings.mjs";
 import _BranchStatus from "./BranchStatus.mjs";
-import _BranchType from "./BranchType.mjs";
+import _OrganizationType from "./OrganizationType.mjs";
 import _CalendarBlock from "./CalendarBlock.mjs";
 import _CalendarBlockExcluded from "./CalendarBlockExcluded.mjs";
 import _CalendarBlockRepeat from "./CalendarBlockRepeat.mjs";
@@ -22,7 +22,7 @@ import _Client from "./Client.mjs";
 import _ClientPhone from "./ClientPhone.mjs";
 import _ClientReferral from "./ClientReferral.mjs";
 import _ClientStatus from "./ClientStatus.mjs";
-import _ClientSyContact from "./ClientSyContact.mjs";
+import _ClientContact from "./ClientContact.mjs";
 import _ClockHistory from "./ClockHistory.mjs";
 import _ClockHistoryOption from "./ClockHistoryOption.mjs";
 import _CommunicationHistory from "./CommunicationHistory.mjs";
@@ -134,7 +134,7 @@ import _State from "./State.mjs";
 import _TimeZone from "./TimeZone.mjs";
 import _UsdaLicensing from "./UsdaLicensing.mjs";
 import _User from "./User.mjs";
-import _UserBranchMapping from "./UserBranchMapping.mjs";
+import _UserBranchMapping from "./UserBranch.mjs";
 import _UserContact from "./UserContact.mjs";
 import _UserHashToken from "./UserHashToken.mjs";
 import _UserInventory from "./UserInventory.mjs";
@@ -175,7 +175,7 @@ export default function initModels(sequelize) {
   const BranchPhone = _BranchPhone.init(sequelize, DataTypes);
   const BranchSettings = _BranchSettings.init(sequelize, DataTypes);
   const BranchStatus = _BranchStatus.init(sequelize, DataTypes);
-  const BranchType = _BranchType.init(sequelize, DataTypes);
+  const OrganizationType = _OrganizationType.init(sequelize, DataTypes);
   const CalendarBlock = _CalendarBlock.init(sequelize, DataTypes);
   const CalendarBlockExcluded = _CalendarBlockExcluded.init(
     sequelize,
@@ -186,7 +186,7 @@ export default function initModels(sequelize) {
   const ClientPhone = _ClientPhone.init(sequelize, DataTypes);
   const ClientReferral = _ClientReferral.init(sequelize, DataTypes);
   const ClientStatus = _ClientStatus.init(sequelize, DataTypes);
-  const ClientSyContact = _ClientSyContact.init(sequelize, DataTypes);
+  const ClientContact = _ClientContact.init(sequelize, DataTypes);
   const ClockHistory = _ClockHistory.init(sequelize, DataTypes);
   const ClockHistoryOption = _ClockHistoryOption.init(sequelize, DataTypes);
   const CommunicationHistory = _CommunicationHistory.init(sequelize, DataTypes);
@@ -460,6 +460,10 @@ export default function initModels(sequelize) {
     foreignKey: "patientNumericAttrId",
     otherKey: "patientId",
   });
+  Patient.belongsTo(PatientBreed, { as: "breed", foreignKey: "breedId"});
+  PatientBreed.hasMany(Patient, { as: "patients", foreignKey: "breedId"});
+  Patient.belongsTo(PatientSpecies, { as: "species", foreignKey: "speciesId"});
+  PatientSpecies.hasMany(Patient, { as: "patients", foreignKey: "speciesId"});
   Billing.belongsTo(Appt, { as: "appt", foreignKey: "apptId" });
   Appt.hasOne(Billing, { as: "billing", foreignKey: "apptId" });
   Exam.belongsTo(Appt, { as: "appt", foreignKey: "apptId" });
@@ -530,8 +534,8 @@ export default function initModels(sequelize) {
     as: "calendarBlocks",
     foreignKey: "branchId",
   });
-  Branch.belongsTo(BranchType, { as: "branchType", foreignKey: "branchTypeId" });
-  BranchType.hasMany(Appt, { as: "branches", foreignKey: "branchTypeId" });
+  Organization.belongsTo(OrganizationType, { as: "organizationType", foreignKey: "organizationTypeId" });
+  OrganizationType.hasMany(Organization, { as: "branches", foreignKey: "organizationTypeId" });
   CalendarBlockExcluded.belongsTo(Branch, {
     as: "branch",
     foreignKey: "branchId",
@@ -557,9 +561,9 @@ export default function initModels(sequelize) {
     as: "clientReferrals",
     foreignKey: "branchId",
   });
-  ClientSyContact.belongsTo(Branch, { as: "branch", foreignKey: "branchId" });
-  Branch.hasMany(ClientSyContact, {
-    as: "clientSyContacts",
+  ClientContact.belongsTo(Branch, { as: "branch", foreignKey: "branchId" });
+  Branch.hasMany(ClientContact, {
+    as: "clientContacts",
     foreignKey: "branchId",
   });
   ClockHistory.belongsTo(Branch, { as: "branch", foreignKey: "branchId" });
@@ -1109,6 +1113,8 @@ export default function initModels(sequelize) {
   Organization.hasMany(User, { as: "users", foreignKey: "orgId"});
   Appt.belongsTo(Patient, { as: "patient", foreignKey: "patientId" });
   Patient.hasMany(Appt, { as: "appts", foreignKey: "patientId" });
+  Appt.belongsTo(User, { as: 'user', foreignKey: "userId"});
+  User.hasMany(Appt, { as: "appts", foreignKey: "userId"});
   Billing.belongsTo(Patient, { as: "patient", foreignKey: "patientId" });
   Patient.hasMany(Billing, { as: "billings", foreignKey: "patientId" });
   BillingItem.belongsTo(Patient, { as: "patient", foreignKey: "patientId" });
@@ -1331,7 +1337,7 @@ export default function initModels(sequelize) {
     BranchPhone,
     BranchSettings,
     BranchStatus,
-    BranchType,
+    OrganizationType,
     CalendarBlock,
     CalendarBlockExcluded,
     CalendarBlockRepeat,
@@ -1339,7 +1345,7 @@ export default function initModels(sequelize) {
     ClientPhone,
     ClientReferral,
     ClientStatus,
-    ClientSyContact,
+    ClientContact,
     ClockHistory,
     ClockHistoryOption,
     CommunicationHistory,
@@ -1473,5 +1479,6 @@ export default function initModels(sequelize) {
     ZoetisLabSection,
     ZoetisLabTest,
     ZoetisSpeciesMapping,
+    sequelize
   };
 }

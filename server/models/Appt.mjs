@@ -27,10 +27,10 @@ export default class Appt extends Model {
       },
       field: 'branch_id'
     },
-    providerId: {
+    userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      field: 'provider_id'
+      field: 'user_id'
     },
     apptTypeId: {
       type: DataTypes.INTEGER,
@@ -125,7 +125,7 @@ export default class Appt extends Model {
         name: "appt_provider_id_idx",
         using: "BTREE",
         fields: [
-          { name: "provider_id" },
+          { name: "user_id" },
         ]
       },
       {

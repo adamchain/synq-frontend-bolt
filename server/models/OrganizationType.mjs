@@ -1,7 +1,7 @@
 import _sequelize from 'sequelize';
 const { Model, Sequelize } = _sequelize;
 
-export default class BranchType extends Model {
+export default class OrganizationType extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
     id: {
@@ -10,12 +10,16 @@ export default class BranchType extends Model {
       primaryKey: true
     },
     name: {
-      type: DataTypes.STRING(20),
+      type: DataTypes.STRING(45),
+      allowNull: false,
+    },
+    product: {
+      type: DataTypes.STRING(45),
       allowNull: false,
     }
   }, {
     sequelize,
-    tableName: 'branch_type',
+    tableName: 'organization_type',
     timestamps: true,
     paranoid: true,
     indexes: [
