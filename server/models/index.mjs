@@ -1309,6 +1309,10 @@ export default function initModels(sequelize) {
     as: "reminderUsers",
     foreignKey: "reminderId",
   });
+  Reminder.belongsTo(ReminderType, { as: "reminderType", foreignKey: "reminderTypeId" });
+  ReminderType.hasMany(Reminder, { as: "reminders", foreignKey: "reminderTypeId" });
+  // Reminder.belongsTo(ReminderStatus, { as: "reminderStatus", foreignKey: "reminderStatusId" });
+  // ReminderStatus.hasMany(Reminder, { as: "reminders", foreignKey: "reminderStatusId" });
   Branch.belongsTo(State, { as: "state", foreignKey: "stateId" });
   State.hasMany(Branch, { as: "branches", foreignKey: "stateId" });
   Client.belongsTo(State, { as: "state", foreignKey: "stateId" });

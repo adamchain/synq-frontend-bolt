@@ -44,10 +44,14 @@ export default class Reminder extends Model {
       },
       field: 'client_id'
     },
-    reminderType: {
+    reminderTypeId: {
       type: DataTypes.TINYINT,
       allowNull: true,
-      field: 'reminder_type'
+      references: {
+        model: 'reminder_type',
+        key: 'id'
+      },
+      field: 'reminder_type_id'
     },
     nextDueDate: {
       type: DataTypes.DATEONLY,
