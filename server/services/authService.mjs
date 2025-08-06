@@ -22,7 +22,7 @@ export async function authenticate({ email, password, branchId }) {
 
   const user = await User.findOne({
     where: {
-      status: 'active',
+      status: 'A',
       email: {
         [Op.like]: email.trim(),
       },

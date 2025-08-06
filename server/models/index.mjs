@@ -772,8 +772,6 @@ export default function initModels(sequelize) {
   Branch.hasMany(Message, { as: "messages", foreignKey: "branchId" });
   NoteHistory.belongsTo(Branch, { as: "branch", foreignKey: "branchId" });
   Branch.hasMany(NoteHistory, { as: "noteHistories", foreignKey: "branchId" });
-  Patient.belongsTo(Branch, { as: "branch", foreignKey: "branchId" });
-  Branch.hasMany(Patient, { as: "patients", foreignKey: "branchId" });
   PatientCategoricalMeasurement.belongsTo(Branch, {
     as: "branch",
     foreignKey: "branchId",
@@ -1113,8 +1111,8 @@ export default function initModels(sequelize) {
   Organization.hasMany(User, { as: "users", foreignKey: "orgId"});
   Appt.belongsTo(Patient, { as: "patient", foreignKey: "patientId" });
   Patient.hasMany(Appt, { as: "appts", foreignKey: "patientId" });
-  Appt.belongsTo(User, { as: 'user', foreignKey: "userId"});
-  User.hasMany(Appt, { as: "appts", foreignKey: "userId"});
+  Appt.belongsTo(User, { as: 'user', foreignKey: "providerId"});
+  User.hasMany(Appt, { as: "appts", foreignKey: "providerId"});
   Billing.belongsTo(Patient, { as: "patient", foreignKey: "patientId" });
   Patient.hasMany(Billing, { as: "billings", foreignKey: "patientId" });
   BillingItem.belongsTo(Patient, { as: "patient", foreignKey: "patientId" });

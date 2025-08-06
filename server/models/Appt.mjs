@@ -27,10 +27,14 @@ export default class Appt extends Model {
       },
       field: 'branch_id'
     },
-    userId: {
+    providerId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      field: 'user_id'
+      references: {
+        model: 'user',
+        key: 'id'
+      },
+      field: 'provider__user_id'
     },
     apptTypeId: {
       type: DataTypes.INTEGER,
@@ -50,10 +54,10 @@ export default class Appt extends Model {
       },
       field: 'appt_status_id'
     },
-    stTime: {
+    startTime: {
       type: DataTypes.DATE,
       allowNull: false,
-      field: 'st_time'
+      field: 'start_time'
     },
     duration: {
       type: DataTypes.INTEGER,
@@ -76,6 +80,10 @@ export default class Appt extends Model {
     createdBy: {
       type: DataTypes.INTEGER,
       allowNull: true,
+      references: {
+        model: 'user',
+        key: 'id'
+      },
       field: 'created_by'
     },
     createdTime: {
@@ -86,6 +94,10 @@ export default class Appt extends Model {
     updatedBy: {
       type: DataTypes.INTEGER,
       allowNull: true,
+      references: {
+        model: 'user',
+        key: 'id'
+      },
       field: 'updated_by'
     },
     updatedTime: {

@@ -18,15 +18,6 @@ export default class Patient extends Model {
       },
       field: 'client_id'
     },
-    branchId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'branch',
-        key: 'id'
-      },
-      field: 'branch_id'
-    },
     primaryDoctorId: {
       type: DataTypes.INTEGER,
       allowNull: true,

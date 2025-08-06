@@ -13,7 +13,7 @@ const sequelize = new Sequelize(dbConfig.name, dbConfig.user, dbConfig.pass, {
       rejectUnauthorized: false,
     },
   },
-  logging: false,
+  logging: true,
   define: {
     timestamps: true,
     underscored: true,

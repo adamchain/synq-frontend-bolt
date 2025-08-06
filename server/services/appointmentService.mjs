@@ -1,4 +1,5 @@
 import { models } from "../lib/db.mjs";
+import { Op } from 'sequelize'
 
 import {
   createRow,
@@ -15,28 +16,30 @@ export async function get(user, id) {
 }
 
 export async function find(user, query, options = {}) {
-  options.include = [
-    {
-      model: Branch,
-      as: 'branch'
-    },
-    {
-      model: Patient,
-      as: 'patient'
-    },
-    {
-      model: User,
-      as: 'user'
-    },
-    {
-      model: ApptType,
-      as: 'apptType'
-    },
-    {
-      model: ApptStatus,
-      as: 'apptStatus'
-    }
-  ]
+  if (!options.include) {
+    options.include = [
+      {
+        model: Branch,
+        as: 'branch'
+      },
+      {
+        model: Patient,
+        as: 'patient'
+      },
+      {
+        model: User,
+        as: 'user'
+      },
+      {
+        model: ApptType,
+        as: 'apptType'
+      },
+      {
+        model: ApptStatus,
+        as: 'apptStatus'
+      }
+    ];
+  }
   return findRows(Model, user, query, options);
 }
 
@@ -49,5 +52,9 @@ export async function update(user, id, data) {
 }
 
 export async function del(user, id) {
-  return deleteRow(Appt, user, id);
+  return deleteRow(Model, user, id);
+}
+
+export async function getUpcoming(user) {
+  return await find(user, { startTime: { [Op.gt]: new Date() }});
 }
