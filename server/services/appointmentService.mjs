@@ -11,7 +11,31 @@ import {
 
 const { Appt: Model, ApptType, ApptStatus, Branch, Patient, User } = models;
 
-export async function get(user, id) {
+export async function get(user, id, options = {}) {
+  if (!options.include) {
+    options.include = [
+      {
+        model: Branch,
+        as: 'branch'
+      },
+      {
+        model: Patient,
+        as: 'patient'
+      },
+      {
+        model: User,
+        as: 'user'
+      },
+      {
+        model: ApptType,
+        as: 'apptType'
+      },
+      {
+        model: ApptStatus,
+        as: 'apptStatus'
+      }
+    ];
+  }
   return getRowById(Model, user, id);
 }
 

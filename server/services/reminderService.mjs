@@ -11,8 +11,28 @@ import { Op } from 'sequelize'
 
 const { Reminder: Model, Client, Patient, User, ReminderType, ReminderStatus } = models;
 
-export async function get(user, id) {
-  return getRowById(Model, user, id);
+export async function get(user, id, options = {}) {
+  if (!options.include) {
+    options.include = [
+      {
+        model: Client,
+        as: 'client'
+      },
+      {
+        model: Patient,
+        as: 'patient'
+      },
+      {
+        model: ReminderType,
+        as: 'reminderType'
+      },
+      // {
+      //   model: ReminderStatus,
+      //   as: 'reminderStatus'
+      // }
+    ];
+  }
+  return getRowById(Model, user, id, options);
 }
 
 export async function find(user, query, options = {}) {
