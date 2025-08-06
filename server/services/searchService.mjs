@@ -27,15 +27,28 @@ export async function search(user) {
     },
     include,
     attributes: ["id", "firstName", "lastName"],
-  }).then(data => {
-    const patients = []
-    return Promise.map(data, row => {
+  }).then(rows => {
+    const patients = [];
+    let data = rows.map(row => {
       if (row.patients) patients.push(row.patients)
       return {
         id: row.id,
-        name: `${row.firstName} ${row.lastName}`,
+        name: `${row.firstName.trim()} ${row.lastName.trim()}`,
         type: 'C'
       };
-    })
+    });
+    if (patients.length) {
+      data = [ ...data, patients.map(row => {
+        return {
+          id: row.id,
+          name: `${row.firstName.trim()} ${row.lastName.trim()}`,
+          type: 'P',
+          clientId: row.clientId,
+          breed: row.breed.breedName,
+          image: row.breed.breedImage
+        };
+      })]
+    }
+    return data.sort((a, b) => a.name.localeCompare(b.name));
   });
 }
