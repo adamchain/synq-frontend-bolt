@@ -140,8 +140,8 @@ import _UserHashToken from "./UserHashToken.mjs";
 import _UserInventory from "./UserInventory.mjs";
 import _UserPhone from "./UserPhone.mjs";
 import _UserPwd from "./UserPwd.mjs";
+import _Role from "./Role.mjs";
 import _UserRole from "./UserRole.mjs";
-import _UserRoleMapping from "./UserRoleMapping.mjs";
 import _UserStatus from "./UserStatus.mjs";
 import _UserWorkingException from "./UserWorkingException.mjs";
 import _UserWorkingHours from "./UserWorkingHours.mjs";
@@ -392,8 +392,8 @@ export default function initModels(sequelize) {
   const UserInventory = _UserInventory.init(sequelize, DataTypes);
   const UserPhone = _UserPhone.init(sequelize, DataTypes);
   const UserPwd = _UserPwd.init(sequelize, DataTypes);
+  const Role = _Role.init(sequelize, DataTypes);
   const UserRole = _UserRole.init(sequelize, DataTypes);
-  const UserRoleMapping = _UserRoleMapping.init(sequelize, DataTypes);
   const UserStatus = _UserStatus.init(sequelize, DataTypes);
   const UserWorkingException = _UserWorkingException.init(sequelize, DataTypes);
   const UserWorkingHours = _UserWorkingHours.init(sequelize, DataTypes);
@@ -412,6 +412,18 @@ export default function initModels(sequelize) {
   const ZoetisLabTest = _ZoetisLabTest.init(sequelize, DataTypes);
   const ZoetisSpeciesMapping = _ZoetisSpeciesMapping.init(sequelize, DataTypes);
 
+  User.belongsToMany(Role, {
+    as: "roles",
+    through: UserRole,
+    foreignKey: "user_id",
+    otherKey: "role_id"
+  });
+  Role.belongsToMany(User, {
+    as: "users",
+    through: UserRole,
+    foreignKey: "role_id",
+    otherKey: "user_id"
+  });
   BillingItem.belongsToMany(Inventory, {
     as: "inventoryIdInventories",
     through: BillingPackageItem,
@@ -845,16 +857,16 @@ export default function initModels(sequelize) {
   Branch.hasMany(UserPhone, { as: "userPhones", foreignKey: "branchId" });
   UserPhone.belongsTo(User, { as: "user", foreignKey: "userId" });
   User.hasMany(UserPhone, { as: "phones", foreignKey: "userId" });
-  UserRoleMapping.belongsTo(Branch, { as: "branch", foreignKey: "branchId" });
-  Branch.hasMany(UserRoleMapping, {
-    as: "userRoleMappings",
+  UserRole.belongsTo(Branch, { as: "branch", foreignKey: "branchId" });
+  Branch.hasMany(UserRole, {
+    as: "userRoles",
     foreignKey: "branchId",
   });
-  User.hasMany(UserRoleMapping, {
+  User.hasMany(UserRole, {
     as: "roles",
     foreignKey: "userId",
   });
-  UserRoleMapping.belongsTo(User, { as: "users", foreignKey: "userId"});
+  UserRole.belongsTo(User, { as: "users", foreignKey: "userId"});
   UserWorkingException.belongsTo(Branch, {
     as: "branch",
     foreignKey: "branchId",
@@ -1465,8 +1477,8 @@ export default function initModels(sequelize) {
     UserInventory,
     UserPhone,
     UserPwd,
+    Role,
     UserRole,
-    UserRoleMapping,
     UserStatus,
     UserWorkingException,
     UserWorkingHours,

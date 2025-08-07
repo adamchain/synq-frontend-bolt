@@ -59,6 +59,11 @@ export default class Appt extends Model {
       allowNull: false,
       field: 'start_time'
     },
+    timezone: {
+      type: DataTypes.STRING(24),
+      allowNull: false,
+      field: 'timezone'
+    },
     duration: {
       type: DataTypes.INTEGER,
       allowNull: false

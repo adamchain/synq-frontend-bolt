@@ -4,23 +4,31 @@ const { Model, Sequelize } = _sequelize;
 export default class UserRole extends Model {
   static init(sequelize, DataTypes) {
   return super.init({
-    roleId: {
-      autoIncrement: true,
-      type: DataTypes.TINYINT,
+    userId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
-      field: 'role_id'
+      field: 'user_id'
     },
-    roleCd: {
+    roleId: {
       type: DataTypes.CHAR(2),
       allowNull: false,
-      unique: "role_cd_UNIQUE",
-      field: 'role_cd'
+      primaryKey: true,
+      field: 'role_id',
+      references: {
+        model: 'role',
+        key: 'id'
+      }
     },
-    roleName: {
-      type: DataTypes.STRING(15),
+    branchId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      field: 'role_name'
+      primaryKey: true,
+      references: {
+        model: 'branch',
+        key: 'id'
+      },
+      field: 'branch_id'
     }
   }, {
     sequelize,
@@ -33,12 +41,27 @@ export default class UserRole extends Model {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "role_id" },
+          { name: "user_id" },
+          { name: "branch_id" },
+          { name: "role_cd" },
         ]
       },
       {
-        name: "role_cd_UNIQUE",
-        unique: true,
+        name: "user_role_mapping_user_id_idx",
+        using: "BTREE",
+        fields: [
+          { name: "user_id" },
+        ]
+      },
+      {
+        name: "user_role_mapping_branch_id_idx",
+        using: "BTREE",
+        fields: [
+          { name: "branch_id" },
+        ]
+      },
+      {
+        name: "user_role_mapping_role_id_idx",
         using: "BTREE",
         fields: [
           { name: "role_cd" },
