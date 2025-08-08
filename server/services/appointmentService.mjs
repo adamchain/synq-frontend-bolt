@@ -68,7 +68,7 @@ export async function find(user, query, options = {}) {
 }
 
 export async function create(user, data) {
-  return createRow(Model, user, data);
+  return createRow(Model, user, data, { authBypass: data.authBypass === true });
 }
 
 export async function update(user, id, data) {

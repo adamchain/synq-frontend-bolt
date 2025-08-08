@@ -162,11 +162,12 @@ export async function createRow(
   options = { authBypass: false }
 ) {
   if (!user && !options.authBypass) throw authRequired();
+  delete data.authBypass
   const id = v4();
   return model.create({
     id,
     ...data,
-    accountId: user.currentAccountId,
+    branchId: user.currentBranch,
     createdBy: user.id,
     updatedBy: user.id,
   });
